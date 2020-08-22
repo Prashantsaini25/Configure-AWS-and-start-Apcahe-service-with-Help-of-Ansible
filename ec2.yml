@@ -7,14 +7,14 @@
     ec2:
       key_name: "awskey"
       instance_type: "t2.micro"
-      image: "ami-0a780d5bac870126a"
+      image: "ami-052c08d70def0ac62"
       wait: "yes"
       count: 1
-      vpc_subnet_id: "subnet-75173637"
+      vpc_subnet_id: "subnet-75143b1d"
       assign_public_ip: yes
       region: "ap-south-1"
       state: present
-      group_id: "sg-02d55736377gedbsbd"
+      group_id: "sg-02d5533662fa41b87"
       aws_access_key: "{{ myuser }}"
       aws_secret_key: "{{ mypass }}"
     register: ec2
@@ -43,6 +43,51 @@
   become: yes
   gather_facts: no
   tasks:
+  - name: "install python"
+    command: "yum install python3 -y"
+  - name: "install pip"
+    command: "yum install python3-pip -y"
+  - name: "Docker Repository"
+    yum_repository:
+       name: "Docker"
+       description: "Docker Repo"
+       baseurl: "https://download.docker.com/linux/centos/7/x86_64/stable"
+       gpgcheck: "no"
+  -  name: "Download Docker"
+     package:
+        name: "docker-ce-18.09.1-3.el7.x86_64"
+        state: present
+
+   -  name: "Start Docker Service"
+     service:
+       name: "docker"
+       state: started
+       enabled: yes
+
+  -  name: "Installing Docker With pip"
+     command: "pip3 install docker"
+
+
+  - name: "creating folder and copy in that folder"
+    file:
+      path: "/mywebsite"
+      state: directory
+  - name: "Copying local files"
+    copy:
+      src: "index.html"
+      dest: "/mywebsite/"
+
+  - name: "Creating OS"
+    docker_container:
+      name: "Myweb4396"
+      image: "httpd"
+      state: started
+      exposed_ports:
+      - "80"
+      ports:
+      - "8081:80"
+      volumes:
+      - /myfile:/usr/local/apache2/htdocs/
   - name: Configur httpd
     package:
       name: httpd
@@ -56,4 +101,3 @@
     copy:
       src: "/ansible_task/index.html"
       dest: "/var/www/html"
-
