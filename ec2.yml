@@ -10,11 +10,11 @@
       image: "ami-0a780d5bac870126a"
       wait: "yes"
       count: 1
-      vpc_subnet_id: "subnet-75143b1d"
+      vpc_subnet_id: "subnet-75173637"
       assign_public_ip: yes
       region: "ap-south-1"
       state: present
-      group_id: "sg-02d5533662fa41b87"
+      group_id: "sg-02d55736377gedbsbd"
       aws_access_key: "{{ myuser }}"
       aws_secret_key: "{{ mypass }}"
     register: ec2
